@@ -21,6 +21,7 @@ import {
   withInterceptors,
 } from "@angular/common/http";
 import { authInterceptor } from "./auth-interceptor.interceptor";
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 // import { routes } from "./app-routing.module";
 
 @NgModule({
@@ -36,6 +37,7 @@ import { authInterceptor } from "./auth-interceptor.interceptor";
     AppService,
     AuthGuard,
     provideHttpClient(withInterceptors([authInterceptor])),
+    provideAnimationsAsync(),
   ],
 })
 export class AppModule {}

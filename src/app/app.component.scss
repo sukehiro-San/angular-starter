@@ -1,0 +1,154 @@
+:host ::ng-deep .active {
+  color: rgb(235, 15, 44);
+  font-weight: bold;
+}
+
+:host .app-container {
+  background: url("https://img.freepik.com/free-vector/abstract-hexagonal-pattern-dark-backdrop-cyber-connection_1017-53964.jpg?w=900&t=st=1725011309~exp=1725011909~hmac=47b368c2ad9e7330ac3941d40c83ce44106a706a1cffcc59836c09014ddfda71");
+  background-repeat: no-repeat;
+  background-size: cover;
+  min-height: 100vh;
+
+  //   filter:blur(1px) ;
+}
+
+:host .app-container .app-navigation {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 10vh;
+  padding: 10px 20px;
+  background-color: #0000009a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.438);
+  a {
+    color: white;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: 450;
+    margin-left: 50px;
+  }
+  .spacer {
+    display: flex;
+    flex: 1;
+  }
+  .nav-link {
+    margin-right: 5px;
+  }
+  .nav-button {
+    color: white;
+    padding: 3px 5px;
+    border: 1px solid white;
+    border-radius: 10px;
+    background: transparent;
+    font-size: 1em;
+    // font
+  }
+}
+
+:host main {
+  height: calc(100vh - 10vh);
+  background-color: rgba(0, 0, 0, 0.212);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .swap-box {
+    color: whitesmoke;
+    border: 1px solid rgba(255, 255, 255, 0.541);
+    border-radius: 20px;
+    background-color: #000000b9;
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 0px 8px 3px rgba(255, 100, 0, 0.8);
+    // flex-direction: column;
+
+    .swap-box-title {
+      font-weight: 450;
+    }
+    .swap-box-tokens {
+      width: 400px;
+      margin-top: 15px;
+      //   border:
+      border: 1px solid rgba(255, 255, 255, 0.541);
+      border-radius: 20px;
+      position: relative;
+
+      .swap-box-token-1,
+      .swap-box-token-2 {
+        height: 60px;
+        width: 100%;
+        display: flex;
+        // position: relative;
+        z-index: 8;
+      }
+      .reverse-token-div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 42%;
+        left: 49%;
+        transform: rotateZ(90deg);
+        border: 1px solid rgba(255, 255, 255, 0.541);
+        border-radius: 6px;
+        font-size: 6px;
+        background: rgba(10, 10, 10, 0.856);
+        z-index: 10;
+        cursor: pointer;
+        user-select: none;
+        .icon-span {
+          padding: 5px;
+        }
+      }
+      .swap-box-token-1 {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.541);
+      }
+      .swap-box-token-2 {
+        border-top: 1px solid rgba(255, 255, 255, 0.541);
+      }
+    }
+
+    .exchange-rate-box {
+      display: flex;
+      flex-direction: column;
+      margin-top: 15px;
+
+      background-color: #1e1919;
+      border-radius: 20px;
+
+      .rate-box-1,
+      .rate-box-2 {
+        display: flex;
+        flex-direction: row;
+        padding: 10px 15px;
+        justify-content: center;
+        align-items: center;
+        .spacer {
+          flex: 1;
+        }
+        p {
+          font-size: 1em;
+          padding: 0;
+          margin: 0;
+        }
+      }
+    }
+
+    .swap-preview-button {
+      display: flex;
+      border: none;
+      flex: 1;
+      color: rgb(26, 26, 26);
+      background-color: #f5f5f5;
+      border-radius: 10px;
+      padding: 10px 0px;
+      margin-top: 15px;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+:host .mat-mdc-dialog-surface {
+  background-color: transparent;
+}
