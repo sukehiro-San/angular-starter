@@ -4,9 +4,16 @@ import {
   MatDialogActions,
   MatDialogClose,
   MatDialogContent,
+  MatDialogRef,
   MatDialogTitle,
 } from "@angular/material/dialog";
 import { TokenExchangeDialog } from "./token-exchange-dialog";
+import { DialogRef } from "@angular/cdk/dialog";
+import {
+  EXCHANGE_RATE,
+  EXCHANGE_RATE_DISPLAY,
+  TOKENS,
+} from "./tokens.constants";
 
 @Component({
   selector: "app-root",
@@ -34,8 +41,14 @@ import { TokenExchangeDialog } from "./token-exchange-dialog";
               </span>
             </div>
             <div class="swap-box-token-1">
-              <button class="token-1" (click)="openDialog()">
-                <span>{{ token1.token }}</span
+              <button class="token-1" (click)="openDialog('token1')">
+                @if(token1.token !== "--Select--"){<img
+                  src="{{ token1.image }}"
+                  width="20"
+                  height="20"
+                  alt=""
+                  style="border-radius: 50%; margin-right:3px;"
+                />} <span>{{ token1.token }}</span
                 ><span class="material-symbols-outlined">
                   keyboard_arrow_down
                 </span>
@@ -52,8 +65,14 @@ import { TokenExchangeDialog } from "./token-exchange-dialog";
               />
             </div>
             <div class="swap-box-token-2">
-              <button class="token-1" (click)="openDialog()">
-                <span>{{ token2.token }}</span
+              <button class="token-1" (click)="openDialog('token2')">
+                @if(token2.token !== "--Select--"){<img
+                  src="{{ token2.image }}"
+                  width="20"
+                  height="20"
+                  alt=""
+                  style="border-radius: 50%; margin-right:3px;"
+                />} <span>{{ token2.token }}</span
                 ><span class="material-symbols-outlined">
                   keyboard_arrow_down
                 </span>
@@ -74,7 +93,7 @@ import { TokenExchangeDialog } from "./token-exchange-dialog";
             <div class="rate-box-1">
               <p>Exhange Rate:</p>
               <div class="spacer"></div>
-              <p>{{getRate()}}</p>
+              <p>{{ exchangeRate }}</p>
             </div>
             <div class="rate-box-2">
               <p>Network Fee:</p>
@@ -96,32 +115,82 @@ export class AppComponent implements OnInit {
   token1: tokenInterface = {
     value: null,
     token: "BERA",
+    image:
+      "https://as2.ftcdn.net/v2/jpg/07/48/40/61/1000_F_748406134_w9J37XFCMLDyT0nWXbCzTd89czAJXFu3.jpg",
   };
   token2: tokenInterface = {
     value: null,
     token: "HONEY",
+    image:
+      "https://as1.ftcdn.net/v2/jpg/05/69/24/54/1000_F_569245416_BErGinYgza2Cy4vBMcrCVoi5GAQhMckd.webp",
   };
   selectedRate: string | undefined;
+  tokenDialogRef: MatDialogRef<any> | undefined;
+  ExchangeRateDisplay = { ...EXCHANGE_RATE_DISPLAY };
+  ExchangeRates = { ...EXCHANGE_RATE };
+  Tokens = [...TOKENS];
+  exchangeRate = "";
 
   ngOnInit(): void {
     this.selectedRate =
       `${this.token1.token} to ${this.token2.token}` || "BERA to HONEY";
+    this.exchangeRate = this.getRate();
   }
 
   convertRateToken1(ev: any) {
     this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
-    this.token2.value = ExchangeRates[this.selectedRate] * ev;
+    this.exchangeRate = this.getRate();
+    this.token2.value = this.ExchangeRates[this.selectedRate] * ev;
   }
 
   convertRateToken2(ev: any) {
+    // console.log(ev);
     this.selectedRate = `${this.token2.token} to ${this.token1.token}`;
-    this.token1.value = ExchangeRates[this.selectedRate] * ev;
+    this.exchangeRate = this.getRate();
+    this.token1.value = this.ExchangeRates[this.selectedRate] * ev;
   }
 
   constructor(private dialog: MatDialog) {}
 
-  openDialog() {
-    this.dialog.open(TokenExchangeDialog,{hasBackdrop:true});
+  openDialog(whichToken: string) {
+    this.tokenDialogRef = this.dialog.open(TokenExchangeDialog, {
+      hasBackdrop: true,
+      backdropClass: "bkdrop",
+      panelClass: "dialogClass",
+      data: {
+        tokenId: whichToken,
+      },
+    });
+    this.tokenDialogRef.afterClosed().subscribe((result) => {
+      if (result?.tokenId === "token1" && result?.tokenName) {
+        this.token1.token = result?.tokenName;
+        this.token2.token =
+          result.tokenName === this.token2.token
+            ? "--Select--"
+            : this.token2.token;
+        this.token1.image = this.Tokens.find(
+          (t) => t?.name === result?.tokenName
+        )?.image as string;
+        this.token1.value = null;
+        this.token2.value = null;
+        this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
+        this.exchangeRate = this.getRate();
+      }
+      if (result?.tokenId === "token2" && result?.tokenName) {
+        this.token2.token = result?.tokenName;
+        this.token1.token =
+          result.tokenName === this.token1.token
+            ? "--Select--"
+            : this.token1.token;
+        this.token2.image = this.Tokens.find(
+          (t) => t?.name === result?.tokenName
+        )?.image as string;
+        this.token2.value = null;
+        this.token1.value = null;
+        this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
+        this.exchangeRate = this.getRate();
+      }
+    });
   }
 
   invertTokens() {
@@ -131,24 +200,16 @@ export class AppComponent implements OnInit {
     this.token1.value = null;
     this.token2.value = null;
     this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
+    this.exchangeRate = this.getRate();
   }
 
-  getRate(){
-    return ExchangeRateDisplay[this.selectedRate as string]
+  getRate() {
+    return this.ExchangeRateDisplay[this.selectedRate as string];
   }
 }
-
-const ExchangeRates: { [key: string]: number } = {
-  "BERA to HONEY": 0.032,
-  "HONEY to BERA": 31.25,
-};
-
-const ExchangeRateDisplay: { [key: string]: string } = {
-  "BERA to HONEY": "1 BERA = 0.032 HONEY",
-  "HONEY to BERA": "1 HONEY = 31.25 BERA",
-};
 
 interface tokenInterface {
   value: null | number;
   token: string;
+  image: string;
 }
