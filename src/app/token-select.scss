@@ -1,15 +1,27 @@
-:host{
-    background-color: transparent;
-    width:400px;
-    height:700px;
-    border: 1px solid #ffffffd7;
-}
-.mat-mdc-dialog-surface{
-    background-color: transparent;
-}
-:host .token-select-container{
-    background-color: #ffffff00;
-    width:400px;
-    height:700px;
-    border: 1px solid #ffffffd7;
+:host ::ng-deep .token-select-container {
+  display: flex;
+  flex-direction: column;
+  width:400px !important;
+  height: 500px !important;
+  padding:20px 30px;
+  // align-items: center;
+
+  .input-container {
+    position: relative;
+    width: 100%; /* Adjust based on your layout */
+    input {
+        padding:10px 15px ;
+      width: 100%;
+      padding-right: 30px; /* Adjust this based on icon size */
+      box-sizing: border-box;
+    }
+    .suffix-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-45%);
+      pointer-events: none; /* Makes the icon non-interactive */
+      color: #888; /* Adjust color as needed */
+    }
+  }
 }
