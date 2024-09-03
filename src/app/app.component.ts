@@ -92,7 +92,7 @@ import { Subscription } from "rxjs";
             <div class="rate-box-2">
               <p>Network Fee:</p>
               <div class="spacer"></div>
-              <p>---</p>
+              <p>10%</p>
             </div>
           </div>
           <button
@@ -209,16 +209,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   openPreviewDialog() {
-    if (
-      this.token1.token === "--Select--" ||
-      this.token2.token === "--Select--"
-    ) {
+    if (this.token1.value === null || this.token2.value === null) {
       return;
     }
     this.tokenDialogRef = this.dialog.open(PreviewExchangeDialogComponent, {
       hasBackdrop: true,
       backdropClass: "bkdrop",
       panelClass: "dialogClass",
+      data: { token1: { ...this.token1 }, token2: { ...this.token2 } },
     });
   }
 
@@ -228,7 +226,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 }
 
-interface tokenInterface {
+export interface tokenInterface {
   value: null | number;
   token: string;
   image: string;

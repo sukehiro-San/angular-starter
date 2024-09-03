@@ -1,6 +1,12 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import {
+  MatDialog,
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+} from "@angular/material/dialog";
 import { LoadingDialogComponent } from "./loading-dialog.component";
+import { tokenInterface } from "./app.component";
+import { DOLLARS_EXCHANGE, EXCHANGE_RATE_DISPLAY } from "./tokens.constants";
 
 @Component({
   selector: "preview-exchange-dialog",
@@ -17,38 +23,42 @@ import { LoadingDialogComponent } from "./loading-dialog.component";
         <div class="token-container">
           <p class="info-title">You Pay</p>
           <div class="token-quantity-info">
-            <p class="swap-quantity">{{ token1.quantity }}</p>
+            <p class="swap-quantity">{{ data.token1.value }}</p>
             <div class="spacer"></div>
-            <button class="token-1-icon">
-              <!-- <img
-                src="{{ token1.image }}"
+            <button class="token-icon">
+              <img
+                src="{{ data.token1.image }}"
                 width="20"
                 height="20"
                 alt=""
                 style="border-radius: 50%; margin-right:3px;"
-              /> -->
-              <span>{{ token1.tokenName }}</span>
+              />
+              <span>{{ data.token1.token }}</span>
             </button>
           </div>
-          <p class="dollor-quantity">{{ "$" + token1.dollars }}</p>
+          <p class="dollor-quantity">
+            {{ "$" + dollars[data.token1.token] + "/-" }}
+          </p>
         </div>
         <div class="token-container">
           <p class="info-title">You Receive</p>
           <div class="token-quantity-info">
-            <p class="swap-quantity">{{ token2.quantity }}</p>
+            <p class="swap-quantity">{{ data.token2.value }}</p>
             <div class="spacer"></div>
-            <button class="token-1-icon">
-              <!-- <img
-                src="{{ token1.image }}"
+            <button class="token-icon">
+              <img
+                src="{{ data.token2.image }}"
                 width="20"
                 height="20"
                 alt=""
                 style="border-radius: 50%; margin-right:3px;"
-              /> -->
-              <span>{{ token2.tokenName }}</span>
+              />
+              <span>{{ data.token2.token }}</span>
             </button>
           </div>
-          <p class="dollor-quantity">{{ "$" + token2.dollars }}</p>
+          <p class="dollor-quantity">
+            {{ "$" + dollars[data.token2.token] + " /-" }}
+          </p>
         </div>
       </div>
 
@@ -56,15 +66,24 @@ import { LoadingDialogComponent } from "./loading-dialog.component";
         <div class="rate-box-1">
           <p>Exhange Rate:</p>
           <div class="spacer"></div>
-          <p>1 BERA = 0.032 HONEY</p>
+          <p>{{ selectedRate ? exchangeRates[selectedRate] : "---" }}</p>
         </div>
         <div class="rate-box-2">
           <p>Minimum Received:</p>
           <div class="spacer"></div>
-          <p>{{ token2.quantity - 0.1 * token2.quantity }}</p>
+          <p>
+            {{
+              (data.token2.value || 0) -
+                0.1 * (data.token2.value || 0) +
+                " " +
+                data.token2.token
+            }}
+          </p>
         </div>
       </div>
-      <button class="swap-preview-button" type="button" (click)="swap()">Swap</button>
+      <button class="swap-preview-button" type="button" (click)="swap()">
+        Swap
+      </button>
     </div>
   `,
   styleUrls: ["./preview-exchange-dialog.component.scss"],
@@ -72,14 +91,39 @@ import { LoadingDialogComponent } from "./loading-dialog.component";
 export class PreviewExchangeDialogComponent implements OnInit, OnDestroy {
   token1 = { quantity: 2, tokenName: "BERA", dollars: 10 };
   token2 = { quantity: 0.064, tokenName: "HONEY", dollars: 56.25 };
-  constructor(private dialog: MatDialog) {}
-  ngOnInit(): void {}
+
+  // readonly dialogRef = inject(MatDialogRef<TokenExchangeDialog>);
+  readonly data = inject<previewData>(MAT_DIALOG_DATA);
+  loaderRef!: MatDialogRef<LoadingDialogComponent, any>;
+  readonly dollars = { ...DOLLARS_EXCHANGE };
+  selectedRate!: string;
+  exchangeRates = { ...EXCHANGE_RATE_DISPLAY };
+  constructor(
+    private dialog: MatDialog,
+    private dialogRef: MatDialogRef<PreviewExchangeDialogComponent>
+  ) {}
+  ngOnInit(): void {
+    this.selectedRate = `${this.data.token1.token} to ${this.data.token2.token}`;
+  }
   ngOnDestroy(): void {}
   swap() {
-    this.dialog.open(LoadingDialogComponent, {
+    this.loaderRef = this.dialog.open(LoadingDialogComponent, {
       hasBackdrop: true,
       backdropClass: "bkdrop",
       panelClass: "dialogClass",
+      disableClose: true,
+    });
+
+    this.loaderRef.afterClosed().subscribe((result) => {
+      console.log(result);
+      if (result === true) {
+        this.dialogRef.close(true);
+      }
     });
   }
+}
+
+export interface previewData {
+  token1: tokenInterface;
+  token2: tokenInterface;
 }

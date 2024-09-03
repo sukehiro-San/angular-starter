@@ -36,3 +36,9 @@ export const EXCHANGE_RATE: { [key: string]: number } = {
   "SPIDEY to HONEY": 0.064,
   "HONEY to SPIDEY": 15.625,
 };
+
+export const DOLLARS_EXCHANGE: { [key: string]: number } = {
+  BERA: 10000,
+  HONEY: 312500,
+  SPIDEY: 20000,
+};
