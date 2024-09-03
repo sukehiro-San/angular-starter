@@ -1,0 +1,95 @@
+:host ::ng-deep .preview-dialog-container {
+  display: flex;
+  flex-direction: column;
+  width: 400px !important;
+  height: 600px !important;
+  padding: 20px 30px;
+  // align-items: center;
+
+  & > .dialog-title {
+    color: white;
+  }
+
+  & > img {
+    display: flex;
+    border-radius: 15px;
+    height: 200px;
+  }
+
+  & > .swap-info {
+    display: flex;
+    flex-direction: column;
+
+    .token-container {
+      display: flex;
+      padding: 2px 2px;
+      flex-direction: column;
+
+      .info-title,
+      .dollor-quantity {
+        color: #9c9898;
+        font-size: 0.9em;
+        margin-bottom: 1px;
+      }
+
+      .token-quantity-info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        color: white;
+
+        .swap-quantity {
+          margin-bottom: 1px !important;
+        }
+        .spacer {
+          display: flex;
+          flex: 1;
+        }
+      }
+
+      
+    }
+  }
+
+  & > .exchange-rate-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+    color:white;
+
+    background-color: #4e4e4e;
+    border-radius: 20px;
+
+    .rate-box-1,
+    .rate-box-2 {
+      display: flex;
+      flex-direction: row;
+      padding: 10px 15px;
+      justify-content: center;
+      align-items: center;
+      .spacer {
+        flex: 1;
+      }
+      p {
+        font-size: 1em;
+        padding: 0;
+        margin: 0;
+      }
+    }
+  }
+
+  & > .swap-preview-button {
+    display: flex;
+    border: none;
+    flex: 1;
+    color: rgb(26, 26, 26);
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    padding: 10px 0px;
+    margin-top: 15px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+}

@@ -22,6 +22,8 @@ import {
 } from "@angular/common/http";
 import { authInterceptor } from "./auth-interceptor.interceptor";
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { PreviewExchangeDialogComponent } from "./preview-exchange-dialog.component";
+import { TokenExchangeDialog } from "./token-exchange-dialog";
 // import { routes } from "./app-routing.module";
 
 @NgModule({

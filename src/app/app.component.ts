@@ -1,19 +1,13 @@
-import { Component, OnInit, inject } from "@angular/core";
-import {
-  MatDialog,
-  MatDialogActions,
-  MatDialogClose,
-  MatDialogContent,
-  MatDialogRef,
-  MatDialogTitle,
-} from "@angular/material/dialog";
+import { Component, OnDestroy, OnInit, inject } from "@angular/core";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { TokenExchangeDialog } from "./token-exchange-dialog";
-import { DialogRef } from "@angular/cdk/dialog";
 import {
   EXCHANGE_RATE,
   EXCHANGE_RATE_DISPLAY,
   TOKENS,
 } from "./tokens.constants";
+import { PreviewExchangeDialogComponent } from "./preview-exchange-dialog.component";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: "app-root",
@@ -101,7 +95,11 @@ import {
               <p>---</p>
             </div>
           </div>
-          <button class="swap-preview-button" type="button">
+          <button
+            class="swap-preview-button"
+            type="button"
+            (click)="openPreviewDialog()"
+          >
             <span> Preview</span>
             <span class="material-symbols-outlined"> arrow_forward </span>
           </button>
@@ -111,7 +109,7 @@ import {
   `,
   styleUrls: ["./app.component.scss"],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   token1: tokenInterface = {
     value: null,
     token: "BERA",
@@ -130,6 +128,7 @@ export class AppComponent implements OnInit {
   ExchangeRates = { ...EXCHANGE_RATE };
   Tokens = [...TOKENS];
   exchangeRate = "";
+  dialogSubscription: Subscription | undefined;
 
   ngOnInit(): void {
     this.selectedRate =
@@ -161,36 +160,38 @@ export class AppComponent implements OnInit {
         tokenId: whichToken,
       },
     });
-    this.tokenDialogRef.afterClosed().subscribe((result) => {
-      if (result?.tokenId === "token1" && result?.tokenName) {
-        this.token1.token = result?.tokenName;
-        this.token2.token =
-          result.tokenName === this.token2.token
-            ? "--Select--"
-            : this.token2.token;
-        this.token1.image = this.Tokens.find(
-          (t) => t?.name === result?.tokenName
-        )?.image as string;
-        this.token1.value = null;
-        this.token2.value = null;
-        this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
-        this.exchangeRate = this.getRate();
-      }
-      if (result?.tokenId === "token2" && result?.tokenName) {
-        this.token2.token = result?.tokenName;
-        this.token1.token =
-          result.tokenName === this.token1.token
-            ? "--Select--"
-            : this.token1.token;
-        this.token2.image = this.Tokens.find(
-          (t) => t?.name === result?.tokenName
-        )?.image as string;
-        this.token2.value = null;
-        this.token1.value = null;
-        this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
-        this.exchangeRate = this.getRate();
-      }
-    });
+    this.dialogSubscription = this.tokenDialogRef
+      .afterClosed()
+      .subscribe((result) => {
+        if (result?.tokenId === "token1" && result?.tokenName) {
+          this.token1.token = result?.tokenName;
+          this.token2.token =
+            result.tokenName === this.token2.token
+              ? "--Select--"
+              : this.token2.token;
+          this.token1.image = this.Tokens.find(
+            (t) => t?.name === result?.tokenName
+          )?.image as string;
+          this.token1.value = null;
+          this.token2.value = null;
+          this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
+          this.exchangeRate = this.getRate();
+        }
+        if (result?.tokenId === "token2" && result?.tokenName) {
+          this.token2.token = result?.tokenName;
+          this.token1.token =
+            result.tokenName === this.token1.token
+              ? "--Select--"
+              : this.token1.token;
+          this.token2.image = this.Tokens.find(
+            (t) => t?.name === result?.tokenName
+          )?.image as string;
+          this.token2.value = null;
+          this.token1.value = null;
+          this.selectedRate = `${this.token1.token} to ${this.token2.token}`;
+          this.exchangeRate = this.getRate();
+        }
+      });
   }
 
   invertTokens() {
@@ -205,6 +206,25 @@ export class AppComponent implements OnInit {
 
   getRate() {
     return this.ExchangeRateDisplay[this.selectedRate as string];
+  }
+
+  openPreviewDialog() {
+    if (
+      this.token1.token === "--Select--" ||
+      this.token2.token === "--Select--"
+    ) {
+      return;
+    }
+    this.tokenDialogRef = this.dialog.open(PreviewExchangeDialogComponent, {
+      hasBackdrop: true,
+      backdropClass: "bkdrop",
+      panelClass: "dialogClass",
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.tokenDialogRef?.close();
+    this.dialogSubscription?.unsubscribe();
   }
 }
 
